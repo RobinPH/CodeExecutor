@@ -1,0 +1,12 @@
+name: CodeExecutor
+version: ${project.version}
+main: io.github.robinph.codeexecutor.CodeExecutor
+api-version: 1.16
+load: STARTUP
+authors: [ RobinPH ]
+description: Executes code inside Mineacraft. Supports 30+ programming languages.
+commands:
+  code:
+    description: Code Executor
+    usage: /<command>
+    permission: codeexecutor.code

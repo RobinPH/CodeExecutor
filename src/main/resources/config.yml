@@ -1,0 +1,6 @@
+editor-height: 20 # Recommended: 20 and 10
+max-line-length: 192 # Recommended: 192, 192 / 6 == How many 'A' character can you fit in the line
+max-line-count: 1028 # Recommended: <= 1028
+max-character-per-line: 128 # Recommended: >=64 && <= 128
+max-output-line: 64 # Recommended: <= 64
+max-size-per-output: 16384 # Max size per output, 16 kilobytes
