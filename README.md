@@ -25,6 +25,10 @@ Plugin: https://www.spigotmc.org/resources/codeexecutor.88710/
     /code argv set - Set the arguments values
   
   /code stdin - Enable/disable stdin
+  /code save - Saves your current editor
+  /code rename - Renames your current editor
+  /code list - Shows a list of all of your codes
+  /code delete - Delete a code editor.
 ```
 
 ## Permission
@@ -40,6 +44,7 @@ max-line-count: 1028 # Recommended: <= 1028
 max-character-per-line: 128 # Recommended: >=64 && <= 128
 max-output-line: 64 # Recommended: <= 64
 max-size-per-output: 16384 # Max size per output, 16 kilobytes
+max-files-per-player: 32
 ```
 
 ## Usage
@@ -60,3 +65,6 @@ Use of argv
 
 Line move, insert, and delete. Scroll, and go to
 >![](https://media.giphy.com/media/vAwp6iBlGkJpI5GjnA/giphy.gif)
+
+Renaming, Saving, Deleting files
+>![](https://media.giphy.com/media/3cVp9xkp97ip8wXIOq/giphy.gif)
