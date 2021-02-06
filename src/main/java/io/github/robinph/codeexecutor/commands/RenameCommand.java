@@ -12,6 +12,7 @@ public class RenameCommand extends AbstractCommand {
         super("rename");
 
         this.addArgument(new StringArgument());
+        this.getArguments().setLastArgArbitraryLength(true);
     }
 
     @Override

@@ -58,7 +58,7 @@ public class ListCommand extends AbstractCommand {
                 if (!editors.isEmpty()) {
                     for (int i = page * perPage; i < editors.size() && i < (page + 1) * perPage; i++) {
                         CodeEditor editor = editors.get(i);
-                        String name = FontUtils.trimString(editor.getName(), FontMetrics.getLength('A') * 30);
+                        String name = FontUtils.trimString(editor.getName(), FontMetrics.getLength('A') * 25);
                         String padding = FontMetrics.makePadding(maxPaddingLength - FontMetrics.getLength((i + 1) + ""));
 
                         ChatBuilder line = new ChatBuilder();
@@ -66,6 +66,12 @@ public class ListCommand extends AbstractCommand {
                         line.append(new ChatBuilder(" " + FontUtils.colorString('0', padding) + Prefix.NORMAL_COLOR + (i + 1) + " §b" + name)
                                 .addHoverText("Click to open " + editor.getName())
                                 .runCommand("code open " + editor.getName()));
+
+                        if (editor.getLanguage() != null) {
+                            line.resize(FontMetrics.getLength('A') * 34);
+                            line.append(editor.getLanguage().getPrefix());
+                        }
+
                         line.resize(FontMetrics.getLength('A') * 47);
                         line.append(new ChatBuilder("§c§l[-]")
                                 .addHoverText("§cDelete " + editor.getName())
