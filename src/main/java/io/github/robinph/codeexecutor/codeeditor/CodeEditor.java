@@ -582,6 +582,8 @@ public class CodeEditor implements Cloneable {
     public void requireStdin(boolean b) {
         this.requiresStdin = b;
 
+        this.commitChange();
+
         if (this.requiresStdin) {
             this.addFooterMessage(Prefix.SUCCESS_COLOR + "Stdin is now required.");
         } else {
