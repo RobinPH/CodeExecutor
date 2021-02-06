@@ -300,6 +300,10 @@ public class PistonAPI {
     }
 
     public static Language getLanguage(String language) {
+        if (language == null) {
+            return null;
+        }
+
         for (Language lang : PistonAPI.getLanguages().values()) {
             if (language.equalsIgnoreCase(lang.getName())) {
                 return lang;

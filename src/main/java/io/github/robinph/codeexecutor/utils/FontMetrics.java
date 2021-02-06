@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class FontMetrics {
     private static @Getter final Map<Character, MinecraftCharacter> metrics = new HashMap<>();
-
+    public static final int MAX_CHAT_LENGTH = 320;
     private @Getter final char character;
     private @Getter final int length;
 

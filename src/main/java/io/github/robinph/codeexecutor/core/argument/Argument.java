@@ -1,5 +1,6 @@
 package io.github.robinph.codeexecutor.core.argument;
 
+import io.github.robinph.codeexecutor.utils.Prefix;
 import lombok.Getter;
 
 public abstract class Argument {
@@ -25,15 +26,16 @@ public abstract class Argument {
 
     public String error(String value) {
         if (value == null && !this.isNullable()) {
-            return "Expecting an argument. Received: null";
+            return Prefix.ERROR + "Expecting an argument. Received: null";
         }
 
         return this.errorType(value);
     }
 
 
-    public void setNullable(boolean b) {
+    public Argument setNullable(boolean b) {
         this.nullable = b;
 
+        return this;
     }
 }

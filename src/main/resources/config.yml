@@ -4,3 +4,4 @@ max-line-count: 1028 # Recommended: <= 1028
 max-character-per-line: 128 # Recommended: >=64 && <= 128
 max-output-line: 64 # Recommended: <= 64
 max-size-per-output: 16384 # Max size per output, 16 kilobytes
+max-files-per-player: 32

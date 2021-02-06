@@ -26,6 +26,9 @@ public class CodeEditor implements Cloneable {
 
     private @Getter final Player player;
 
+    private @Getter @Setter UUID uuid = UUID.randomUUID();
+    private @Getter String name = this.getUuid().toString();
+
     private @Getter @Setter int currentLine = 1;
     private @Getter @Setter int highlightedLine = 0;
 
@@ -36,14 +39,16 @@ public class CodeEditor implements Cloneable {
     private @Getter @Setter String[] argv = new String[0];
     private @Getter boolean requiresStdin = false;
 
+    private @Getter @Setter boolean saved = false;
+
 
     public CodeEditor(Player player) {
         this.player = player;
     }
 
     public void render() {
-        if (CodeEditor.height < 3) {
-            player.sendMessage("Could not render your text editor. Text editor height must be greater than 2.");
+        if (CodeEditor.height < 4) {
+            player.sendMessage("Can't render your text editor. Text editor height must be greater than 2.");
             return;
         }
 
@@ -54,7 +59,7 @@ public class CodeEditor implements Cloneable {
             texts.add(new TextComponent());
         }
 
-        texts.add(this.header());
+        texts.addAll(this.header());
         texts.addAll(this.body());
         texts.add(this.footer());
 
@@ -69,20 +74,46 @@ public class CodeEditor implements Cloneable {
         this.highlightedLine = 0;
     }
 
-    public TextComponent header() {
-        ChatBuilder builder = new ChatBuilder("Language: ");
+    public List<TextComponent> header() {
+        List<TextComponent> components = new ArrayList<>();
+
+        ChatBuilder row1 = new ChatBuilder();
+        row1.append(new ChatBuilder("Name: §7" + FontUtils.trimString(this.getName(), 6 * 10)).addHoverText(this.getName()).suggestCommand("code rename "));
+        row1.resize(FontMetrics.getLength('A') * 19);
+        row1.append(new ChatBuilder("Language: §7[" + (this.getLanguage() != null ? this.getLanguage().getPrefix() : "Not Set") + "§7]§r")
+                    .addHoverText("Click to change.")
+                    .runCommand("code languages"));
+        row1.resize(FontMetrics.getLength('A') * 42);
+
+        if (this.isRequiresStdin()) {
+            row1.append(" ").append(new ChatBuilder((this.canRun(false) ? "§a" : "§c") + "§l[RUN]§r")
+                    .addHoverText("§aStdin is enabled: §7/code run ...<input>")
+                    .suggestCommand("code run "));
+        } else {
+            row1.append(" ").append(new ChatBuilder((this.canRun(false) ? "§a" : "§c") + "§l[RUN]§r")
+                    .addHoverText("Click to run")
+                    .runCommand("code run"));
+        }
+
+        components.add(row1.build());
 
         ChatBuilder argvBuilder = new ChatBuilder();
         if (this.getArgv().length == 0) {
             argvBuilder.append("No required argv.");
-        }
+        } else {
+            argvBuilder.append("§7[");
+            List<String> arguments = new ArrayList<>();
 
-        for (int i = 0; i < this.getArgv().length; i++) {
-            argvBuilder.append("§7Argv #" + i + ": §f" + this.getArgument(i));
-
-            if (i < this.getArgv().length - 1) {
-                argvBuilder.append("\n");
+            for (String arg : this.getArgv()) {
+                if (arg.isEmpty()) {
+                    arguments.add("null");
+                } else {
+                    arguments.add(arg);
+                }
             }
+
+            argvBuilder.append(FontUtils.trimString(String.join(", ", arguments), 6 * 10));
+            argvBuilder.append("]");
         }
 
         List<String> argvSuggestion = new ArrayList<>();
@@ -94,40 +125,49 @@ public class CodeEditor implements Cloneable {
             }
         }
 
-        builder.append(new ChatBuilder("§7[" + (this.getLanguage() != null ? this.getLanguage().getPrefix() : "Not Set") + "§7]§r")
-                                        .addHoverText("Click to change.")
-                                        .runCommand("code languages"))
-                .append(" ")
-                .append(new ChatBuilder(this.requiresStdin ? "§f[Stdin*]" : "§7[Stdin]")
-                        .addHoverText(this.requiresStdin ? "Click to not require stdin" : "Click to require stdin")
+        List<String> argvHover = new ArrayList<>();
+        for (int i = 0; i < this.getArgv().length; i++) {
+            argvHover.add("Argv #" + i + ": " + (this.getArgument(i).isEmpty() ? "null" : this.getArgument(i)));
+        }
+
+        ChatBuilder row2 = new ChatBuilder();
+        row2.append(new ChatBuilder("Stdin: ").append(this.requiresStdin ? "§aEnabled" : "§cDisabled")
+                        .addHoverText(this.requiresStdin ? "Click to disable" : "Click to enable")
                         .runCommand("code stdin " + (!this.requiresStdin)));
+        row2.resize(FontMetrics.getLength('A') * 19);
 
         if (this.getArgv().length == 0) {
-            builder.append(" ").append(new ChatBuilder((this.isArgsComplete() ? "§a" : "§c") + "[Argv (" + this.getArgv().length +  ")]")
-                            .addHoverText(argvBuilder.build().toPlainText())
-                            .suggestCommand("code argv count "));
+            row2.append(new ChatBuilder("Argv: ").append(FontUtils.colorString('7', "[]"))
+                    .addHoverText("To set the number of argv: /code argv count <count>")
+                    .suggestCommand("code argv count "));
         } else {
-            builder.append(" ").append(new ChatBuilder((this.isArgsComplete() ? "§a" : "§c") + "[Argv (" + this.getArgv().length +  ")]")
-                            .addHoverText(argvBuilder.build().toPlainText())
-                            .suggestCommand("code argv set " + String.join(" ", argvSuggestion)));
+            row2.append(new ChatBuilder("Argv (" + this.getArgv().length + "): ")
+                        .addHoverText("Change the number of argv")
+                        .suggestCommand("code argv count "));
+            row2.append(new ChatBuilder(FontUtils.colorString('7', argvBuilder.build().toPlainText()))
+                        .addHoverText(String.join("\n", argvHover))
+                        .suggestCommand("code argv set " + String.join(" ", argvSuggestion)));
         }
 
-        if (this.isRequiresStdin()) {
-            builder.append(" ").append(new ChatBuilder((this.canRun(false) ? "§a" : "§c") + "§l[RUN]§r")
-                    .addHoverText("§cStdin is required: §7/code run ...<input>")
-                    .suggestCommand("code run "));
+        row2.resize(FontMetrics.getLength('A') * 42);
+
+        if (this.isSaved()) {
+            row2.append(" ").append(new ChatBuilder("§a§l[SAVED]§r")
+                    .addHoverText("§aAlready saved!")
+                    .runCommand("code save"));
         } else {
-            builder.append(" ").append(new ChatBuilder((this.canRun(false) ? "§a" : "§c") + "§l[RUN]§r")
-                    .addHoverText("Click to run")
-                    .runCommand("code run"));
+            row2.append(" ").append(new ChatBuilder("§c§l[SAVE]§r")
+                    .addHoverText("§fChanges are not yet saved.")
+                    .runCommand("code save"));
         }
 
+        components.add(row2.build());
 
-        return builder.build();
+        return components;
     }
 
     public List<TextComponent> body() {
-        int bodyHeight = CodeEditor.height - 2;
+        int bodyHeight = CodeEditor.height - 3;
         List<TextComponent> texts = new ArrayList<>();
         List<List<String>> lines = this.getLines(this.currentLine, bodyHeight, CodeEditor.maxLineLength);
         int linesCount = 0;
@@ -300,6 +340,13 @@ public class CodeEditor implements Cloneable {
     }
 
     public void setLanguage(String language) {
+        this.commitChange();
+
+        if (language == null) {
+            this.language = null;
+            return;
+        }
+
         Language lang = PistonAPI.getLanguage(language);
 
         if (lang != null) {
@@ -317,6 +364,8 @@ public class CodeEditor implements Cloneable {
            this.addFooterMessage(Prefix.ERROR_COLOR + "Maximum line number is: " + CodeEditor.maxLineCount);
             return;
         }
+
+        this.commitChange();
 
         if (text.length() == 0) {
             lines.remove(lineNumber);
@@ -352,6 +401,8 @@ public class CodeEditor implements Cloneable {
     }
 
     public void scroll(int distance) {
+        this.commitChange();
+
         this.currentLine += distance;
 
         if (this.currentLine < 1 || this.currentLine > CodeEditor.maxLineCount) {
@@ -384,6 +435,7 @@ public class CodeEditor implements Cloneable {
             return;
         }
 
+        this.commitChange();
 
         List<Integer> l = new ArrayList<>(this.lines.keySet());
 
@@ -413,6 +465,8 @@ public class CodeEditor implements Cloneable {
             return;
         }
 
+        this.commitChange();
+
         int linesToDelete = Math.min(count, CodeEditor.maxLineCount - lineNumber - 1);
 
         for (int i = 0; i < linesToDelete; i++) {
@@ -436,6 +490,8 @@ public class CodeEditor implements Cloneable {
             return;
         }
 
+        this.commitChange();
+
         String moving = lines.remove(lineNumber);
         if (to - lineNumber >= 1) {
             Collections.sort(l);
@@ -454,11 +510,25 @@ public class CodeEditor implements Cloneable {
         this.addFooterMessage(Prefix.SUCCESS_COLOR + "Line " + lineNumber + " has been moved to line " + to);
     }
 
+    public void changeName(String name) {
+        this.commitChange();
+
+        this.name = name;
+    }
+
     public void setArgvCount(int count) {
         if (count < 0) {
             this.addFooterMessage(Prefix.ERROR_COLOR + "Argv count should be greater than or equal to 0");
             return;
         }
+
+        int max = 32;
+        if (count > max) {
+            this.addFooterMessage(Prefix.ERROR_COLOR + "Maximum argv count is " + max);
+            return;
+        }
+
+        this.commitChange();
 
 
         String[] newArguments = new String[count];
@@ -480,6 +550,8 @@ public class CodeEditor implements Cloneable {
             this.addFooterMessage(Prefix.ERROR_COLOR + "Maximum number of arguments is " + this.getArgv().length + ". To increase: /code argument count <count>");
             return;
         }
+
+        this.commitChange();
 
         this.getArgv()[pos] = arg;
         this.addFooterMessage(Prefix.SUCCESS_COLOR + "Argv #" + pos + " has been set to: " + arg);
@@ -556,6 +628,10 @@ public class CodeEditor implements Cloneable {
         }
 
         return empty.toString();
+    }
+
+    public void commitChange() {
+        this.setSaved(false);
     }
 
     public String paddingFormat(String padding) {

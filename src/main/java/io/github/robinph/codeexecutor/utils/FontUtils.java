@@ -37,7 +37,10 @@ public class FontUtils {
     }
 
     public static String trimString(String text, int maxWidth) {
-        String suffix = "...";
+        return FontUtils.trimString(text, "...", maxWidth);
+    }
+
+    public static String trimString(String text, String suffix, int maxWidth) {
         int suffixLength = FontMetrics.getLength(suffix);
 
         if (maxWidth <= suffixLength) {

@@ -1,5 +1,7 @@
 package io.github.robinph.codeexecutor.core.chat;
 
+import io.github.robinph.codeexecutor.utils.FontMetrics;
+import io.github.robinph.codeexecutor.utils.FontUtils;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -98,7 +100,36 @@ public class ChatBuilder {
         return this;
     }
 
+    public ChatBuilder mergeNewLine(ChatBuilder ...args) {
+        for (int i = 0; i < args.length; i++) {
+            this.append(args[i]);
+
+            if (i < args.length - 1) {
+                this.newLine();
+            }
+        }
+
+        return this;
+    }
+
+    public ChatBuilder resize(int length) {
+        int thisLength = FontMetrics.getLength(this.getText().toPlainText());
+
+        if (thisLength <= length) {
+            this.append(FontUtils.colorString('0', FontMetrics.makePadding(length - thisLength)));
+        }
+
+        return this;
+    }
+
     public TextComponent build() {
         return this.getText();
+    }
+
+    public TextComponent buildCenterAligned() {
+        int paddingLength = FontMetrics.MAX_CHAT_LENGTH - FontMetrics.getLength(this.getText().toPlainText());
+
+        // Center aligned
+        return new ChatBuilder(FontUtils.colorString('0', FontMetrics.makePadding(paddingLength / 2))).append(this).build();
     }
 }

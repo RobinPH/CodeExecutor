@@ -38,7 +38,8 @@ public class ConfigManager {
         MAX_LINE_COUNT("max-line-count"),
         MAX_CHARACTER_PER_LINE("max-character-per-line"),
         MAX_OUTPUT_LINE("max-output-line"),
-        MAX_SIZE_PER_OUTPUT("max-size-per-output");
+        MAX_SIZE_PER_OUTPUT("max-size-per-output"),
+        MAX_FILES_PER_PLAYER("max-files-per-player");
 
         private @Getter final String name;
 
@@ -55,5 +56,6 @@ public class ConfigManager {
         put(Variable.MAX_CHARACTER_PER_LINE, 128);
         put(Variable.MAX_OUTPUT_LINE, 64);
         put(Variable.MAX_SIZE_PER_OUTPUT, 16384);
+        put(Variable.MAX_FILES_PER_PLAYER, 32);
     }};
 }

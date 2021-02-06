@@ -31,8 +31,10 @@ public class CodeEditorCommand extends AbstractCommand implements CommandExecuto
         this.addChild(new LineCommand());
         this.addChild(new ArgvCommand());
         this.addChild(new StdinCommand());
-
-        this.addChild(new TestCommand());
+        this.addChild(new SaveCommand());
+        this.addChild(new RenameCommand());
+        this.addChild(new ListCommand());
+        this.addChild(new DeleteCommand());
 
         Bukkit.getServer().getPluginManager().registerEvents(this, Common.getPlugin());
     }

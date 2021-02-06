@@ -40,10 +40,14 @@ public class Arguments {
                 return false;
             }
         } else {
-            if (this.args.size() != arguments.length) {
-                sender.sendMessage(Prefix.ERROR + String.format("Required length: %s. Received: %s", args.size(), arguments.length));
-                sender.spigot().sendMessage(usage);
-                return false;
+            if (this.args.size() > 0) {
+                if (!this.args.get(this.args.size() - 1).isNullable()) {
+                    if (this.args.size() != arguments.length) {
+                        sender.sendMessage(Prefix.ERROR + String.format("Required length: %s. Received: %s", args.size(), arguments.length));
+                        sender.spigot().sendMessage(usage);
+                        return false;
+                    }
+                }
             }
         }
 

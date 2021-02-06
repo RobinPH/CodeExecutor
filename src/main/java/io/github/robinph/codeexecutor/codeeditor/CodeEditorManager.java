@@ -11,13 +11,11 @@ public class CodeEditorManager {
 
     private final Map<Player, CodeEditor> editors = new HashMap<>();
 
-
     public CodeEditor newEditor(Player player) {
         if (editors.containsKey(player)) {
             player.sendMessage(Prefix.WARNING + "You have an open editor. To open your editor: /code open");
             return null;
         }
-
 
         CodeEditor editor = new CodeEditor(player);
 
@@ -42,6 +40,16 @@ public class CodeEditorManager {
         }
 
         return editors.get(player);
+    }
+
+    public boolean openEditor(CodeEditor editor) {
+        if (editors.containsKey(editor.getPlayer())) {
+            this.closeEditor(editor.getPlayer());
+        }
+
+        editors.put(editor.getPlayer(), editor);
+
+        return true;
     }
 
     public boolean closeEditor(Player player) {
