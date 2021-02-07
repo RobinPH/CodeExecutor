@@ -29,6 +29,7 @@ Plugin: https://www.spigotmc.org/resources/codeexecutor.88710/
   /code rename - Renames your current editor
   /code list - Shows a list of all of your codes
   /code delete - Delete a code editor.
+  /code import - Import code from pastebin
 ```
 
 ## Permission
