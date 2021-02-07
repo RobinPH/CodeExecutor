@@ -13,6 +13,8 @@ public class MoveCommand extends AbstractCommand {
 
         this.addArgument(new IntegerArgument("line number"));
         this.addArgument(new IntegerArgument("to"));
+
+        this.setDescription("Move a line");
     }
     @Override
     public void execute(CommandSender sender, String ...args) {

@@ -19,6 +19,8 @@ public class EditCommand extends AbstractCommand {
         this.addArgument(new StringArgument("text"));
 
         this.getArguments().setLastArgArbitraryLength(true);
+
+        this.setDescription("Edit the text in a line");
     }
 
     @Override

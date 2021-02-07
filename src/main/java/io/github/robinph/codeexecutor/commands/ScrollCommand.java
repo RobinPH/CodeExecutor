@@ -11,7 +11,9 @@ public class ScrollCommand extends AbstractCommand {
     public ScrollCommand() {
         super("scroll");
 
-        this.addArgument(new IntegerArgument("distance"));
+        this.addArgument(new IntegerArgument("distance").setNullable(true));
+
+        this.setDescription("Scroll up/down the editor");
     }
 
     @Override
@@ -23,7 +25,11 @@ public class ScrollCommand extends AbstractCommand {
                 CodeEditor editor = Common.getCodeEditorManager().getEditor(player);
 
                 if (editor != null) {
-                    editor.scroll(IntegerArgument.value(args[0]));
+                    if (args.length > 0) {
+                        editor.scroll(IntegerArgument.value(args[0]));
+                    } else {
+                        editor.scroll(1);
+                    }
                     editor.render();
                 }
             }

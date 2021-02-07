@@ -12,6 +12,8 @@ public class CountCommand extends AbstractCommand {
         super("count");
 
         this.addArgument(new IntegerArgument("count"));
+
+        this.setDescription("Set the number of argv");
     }
 
     @Override

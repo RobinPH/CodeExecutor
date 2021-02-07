@@ -14,7 +14,9 @@ public class DeleteCommand extends AbstractCommand {
         super("delete");
 
         this.getArguments().setLastArgArbitraryLength(true);
-        this.addArgument(new StringArgument().setNullable(false));
+        this.addArgument(new StringArgument("delete").setNullable(false));
+
+        this.setDescription("Delete an editor");
 
     }
 

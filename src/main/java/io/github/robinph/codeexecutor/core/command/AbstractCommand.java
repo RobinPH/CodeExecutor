@@ -19,6 +19,7 @@ public class AbstractCommand {
     private @Getter final Map<String, AbstractCommand> childrenMap = new HashMap<>();
     private @Getter @Setter AbstractCommand parent = null;
     private @Getter final Arguments arguments = new Arguments(this);
+    private @Getter @Setter String description;
 
     public AbstractCommand(String cmd) {
         this.cmd = cmd;
@@ -39,7 +40,7 @@ public class AbstractCommand {
             }
         }
 
-        TextComponent usage = new TextComponent(Prefix.NORMAL + "Usage: §7");
+        TextComponent usage = new TextComponent(Prefix.NORMAL + "Usage for §7");
         usage.addExtra(this.usage());
         sender.spigot().sendMessage(usage);
     }
@@ -103,19 +104,24 @@ public class AbstractCommand {
                 .suggestCommand(String.join(" ", commands) + " "));
 
         if (this.getChildrenMap().size() != 0) {
-            builder.append("[ ");
-            List<String> childrenCommands = this.getChildrenCommands();
-            for (int i = 0; i < childrenCommands.size(); i++) {
-                String childCMD = childrenCommands.get(i);
-                builder.append(new ChatBuilder("§7" + childCMD)
-                                        .addHoverText(cmd + childCMD)
-                                        .runCommand(cmd.substring(1) + childCMD));
+            for (AbstractCommand subCommand : this.getChildren()) {
+                String subCommandCMD = subCommand.getCmd();
 
-                if (i < childrenCommands.size() - 1) {
-                    builder.append(" | ");
+                ChatBuilder subCommandBuilder = new ChatBuilder("§3 »§b» §7" + cmd + "§f" + subCommandCMD + " §7" + subCommand.getArguments().argumentsUsage())
+                                                .addHoverText(cmd + subCommandCMD);
+
+                if (!subCommand.getChildren().isEmpty()) {
+                    subCommandBuilder.runCommand(cmd.substring(1) + subCommandCMD);
+                } else {
+                    subCommandBuilder.suggestCommand(cmd.substring(1) + subCommandCMD + " ");
                 }
+
+                if (subCommand.getDescription() != null) {
+                    subCommandBuilder.append(" §7- ").append("§7" + subCommand.getDescription());
+                }
+
+                builder.newLineAppend(subCommandBuilder);
             }
-            builder.append(" ]");
         }
 
         return builder.build();

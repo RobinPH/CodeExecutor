@@ -12,6 +12,8 @@ public class GoToCommand extends AbstractCommand {
         super("goto");
 
         this.addArgument(new IntegerArgument("line number"));
+
+        this.setDescription("Go to specific line");
     }
 
     @Override

@@ -11,9 +11,11 @@ public class RunCommand extends AbstractCommand {
     public RunCommand() {
         super("run");
 
-        this.addArgument(new StringArgument());
+        this.addArgument(new StringArgument("stdin"));
 
         this.getArguments().setLastArgArbitraryLength(true);
+
+        this.setDescription("Run the code in your editor");
     }
 
     @Override
@@ -23,15 +25,17 @@ public class RunCommand extends AbstractCommand {
 
             CodeEditor editor = Common.getCodeEditorManager().getEditor(player);
 
-            if (editor != null) {
-                if (editor.canRun(true)) {
-                    if (editor.isRequiresStdin()) {
-                        Common.getPistonQueue().add(editor, String.join(" ", args));
+            if (this.getArguments().validate(sender, args)) {
+                if (editor != null) {
+                    if (editor.canRun(true)) {
+                        if (editor.isRequiresStdin()) {
+                            Common.getPistonQueue().add(editor, String.join(" ", args));
+                        } else {
+                            Common.getPistonQueue().add(editor, null);
+                        }
                     } else {
-                        Common.getPistonQueue().add(editor, null);
+                        editor.render();
                     }
-                } else {
-                    editor.render();
                 }
             }
         }

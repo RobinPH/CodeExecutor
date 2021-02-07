@@ -23,7 +23,9 @@ public class ListCommand extends AbstractCommand {
     public ListCommand() {
         super("list");
 
-        this.addArgument(new IntegerArgument().setNullable(true));
+        this.addArgument(new IntegerArgument("page number").setNullable(true));
+
+        this.setDescription("List of your saved editors");
     }
 
     @Override

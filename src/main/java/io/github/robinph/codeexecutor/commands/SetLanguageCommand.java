@@ -15,6 +15,8 @@ public class SetLanguageCommand extends AbstractCommand {
         super("language");
 
         this.addArgument(new StringArgument("language"));
+
+        this.setDescription("Set the language for your editor.");
     }
 
     @Override

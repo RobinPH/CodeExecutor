@@ -16,6 +16,8 @@ public class StdinCommand extends AbstractCommand {
         super("stdin");
 
         this.addArgument(new BooleanArgument());
+
+        this.setDescription("Enable/Disable stdin");
     }
 
     @Override

@@ -18,6 +18,8 @@ public class ImportCommand extends AbstractCommand {
         super("import");
 
         this.addArgument(new StringArgument("pastebinURL"));
+
+        this.setDescription("Import a code from pastebin");
     }
 
     @Override

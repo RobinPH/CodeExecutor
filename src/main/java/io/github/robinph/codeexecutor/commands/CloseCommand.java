@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 public class CloseCommand extends AbstractCommand {
     public CloseCommand() {
         super("close");
+
+        this.setDescription("Close your editor");
     }
 
     @Override

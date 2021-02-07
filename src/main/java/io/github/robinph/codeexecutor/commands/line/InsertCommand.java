@@ -15,6 +15,8 @@ public class InsertCommand extends AbstractCommand {
         this.addArgument(new IntegerArgument("count"));
 
         this.getArguments().setLastArgArbitraryLength(true);
+
+        this.setDescription("Insert a new line");
     }
 
     @Override

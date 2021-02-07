@@ -16,6 +16,8 @@ public class DeleteCommand extends AbstractCommand {
 
         // setLastArgArbitraryLength() must be called last
         this.getArguments().setLastArgArbitraryLength(true);
+
+        this.setDescription("Delete a line/s");
     }
 
     @Override

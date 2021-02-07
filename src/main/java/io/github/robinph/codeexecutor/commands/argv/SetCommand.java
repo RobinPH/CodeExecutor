@@ -18,6 +18,8 @@ public class SetCommand extends AbstractCommand {
         this.addArgument(new StringArgument("argv"));
 
         this.getArguments().setLastArgArbitraryLength(true);
+
+        this.setDescription("Set the argv");
     }
 
     @Override

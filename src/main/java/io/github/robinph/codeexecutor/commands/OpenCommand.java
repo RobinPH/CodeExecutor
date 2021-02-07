@@ -14,8 +14,10 @@ public class OpenCommand extends AbstractCommand {
     public OpenCommand() {
         super("open");
 
-        this.addArgument(new StringArgument());
+        this.addArgument(new StringArgument("editor"));
         this.getArguments().setLastArgArbitraryLength(true);
+
+        this.setDescription("Open an editor.");
     }
 
     @Override

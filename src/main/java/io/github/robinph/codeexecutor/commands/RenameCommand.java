@@ -11,8 +11,10 @@ public class RenameCommand extends AbstractCommand {
     public RenameCommand() {
         super("rename");
 
-        this.addArgument(new StringArgument());
         this.getArguments().setLastArgArbitraryLength(true);
+        this.addArgument(new StringArgument("name").setNullable(false));
+
+        this.setDescription("Rename your editor");
     }
 
     @Override

@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 public class LanguagesListCommand extends AbstractCommand {
     public LanguagesListCommand() {
         super("languages");
+
+        this.setDescription("List of all supported languages");
     }
 
     @Override
