@@ -6,20 +6,17 @@ import com.google.gson.JsonParser;
 import io.github.robinph.codeexecutor.Common;
 import io.github.robinph.codeexecutor.codeeditor.CodeEditor;
 import io.github.robinph.codeexecutor.core.chat.ChatBuilder;
+import io.github.robinph.codeexecutor.core.http.HTTPRequest;
 import io.github.robinph.codeexecutor.utils.FontUtils;
 import io.github.robinph.codeexecutor.utils.Prefix;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PistonAPI {
     public static @Getter final String EXECUTE_URL = "https://emkc.org/api/v1/piston/execute";
@@ -37,9 +34,9 @@ public class PistonAPI {
         editor.addFooterMessage("§7Executing...");
         editor.render();
 
-        JsonObject responseJson = PistonAPI.post(PistonAPI.EXECUTE_URL, request);
+        JsonObject responseJson = HTTPRequest.post(PistonAPI.EXECUTE_URL, request);
         int code = responseJson.get("code").getAsInt();
-        JsonObject response = responseJson.get("response").getAsJsonObject();
+        JsonObject response = new JsonParser().parse(responseJson.get("response").getAsString()).getAsJsonObject();
 
         if (code != 200) {
             String message;
@@ -127,7 +124,7 @@ public class PistonAPI {
                     return;
                 }
 
-                JsonArray response = json.get("response").getAsJsonArray();
+                JsonArray response = new JsonParser().parse(json.get("response").getAsString()).getAsJsonArray();
 
                 response.forEach(elm -> {
                     JsonObject obj = elm.getAsJsonObject();
@@ -155,81 +152,7 @@ public class PistonAPI {
     }
 
     public static JsonObject fetchLanguages() {
-        return PistonAPI.get(PistonAPI.VERSIONS_URL);
-    }
-
-    public static JsonObject get(String url) {
-        try {
-            HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-            con.setRequestMethod("GET");
-
-            StringBuilder builder = new StringBuilder();
-            try(BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    builder.append(line.trim());
-                }
-            }
-
-            JsonObject response = new JsonObject();
-
-            response.addProperty("code", con.getResponseCode());
-
-            response.add("response", new JsonParser().parse(builder.toString()));
-
-            return response;
-
-        } catch (IOException e) {
-            JsonObject response = new JsonObject();
-
-            response.addProperty("code", -1);
-            response.add("response", new JsonObject());
-
-            return response;
-        }
-    }
-
-    public static JsonObject post(String url, JsonObject request) {
-        try {
-            HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("Accept", "application/json");
-            con.setDoOutput(true);
-
-            try(OutputStream os = con.getOutputStream()) {
-                byte[] input = request.toString().getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-
-            JsonObject response = new JsonObject();
-
-            response.addProperty("code", con.getResponseCode());
-            response.add("response", new JsonObject());
-            if (con.getResponseCode() == 400) {
-                return response;
-            }
-
-
-            StringBuilder builder = new StringBuilder();
-            try(BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    builder.append(line.trim());
-                }
-            }
-
-            response.add("response", new JsonParser().parse(builder.toString()).getAsJsonObject());
-
-            return response;
-
-        } catch (IOException e) {
-            JsonObject response = new JsonObject();
-            response.addProperty("code", -1);
-
-            return response;
-        }
+        return HTTPRequest.get(PistonAPI.VERSIONS_URL);
     }
 
     public static JsonObject requestJson(String language, String source, String stdin, String... args) {

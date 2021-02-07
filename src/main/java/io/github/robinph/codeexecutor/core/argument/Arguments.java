@@ -2,6 +2,7 @@ package io.github.robinph.codeexecutor.core.argument;
 
 import io.github.robinph.codeexecutor.core.chat.ChatBuilder;
 import io.github.robinph.codeexecutor.core.command.AbstractCommand;
+import io.github.robinph.codeexecutor.utils.FontUtils;
 import io.github.robinph.codeexecutor.utils.Prefix;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -31,11 +32,11 @@ public class Arguments {
     }
 
     public boolean validate(CommandSender sender, String ...arguments) {
-        TextComponent usage = new ChatBuilder(Prefix.NORMAL + "Usage: §7").append(this.command.usage()).append(this.argumentsUsage()).build();
+        TextComponent usage = new ChatBuilder(Prefix.NORMAL + "Usage: §7").append(this.command.usage()).append(FontUtils.colorString('7', this.argumentsUsage())).build();
 
         if (this.isLastArgArbitraryLength()) {
             if (this.args.size() - 1 > arguments.length) {
-                sender.sendMessage(Prefix.ERROR + String.format("Required length: More than %s. Received: %s", args.size() - 2, arguments.length));
+                sender.sendMessage(Prefix.ERROR + String.format("Required arguments: More than %s. Received: %s", args.size() - 2, arguments.length));
                 sender.spigot().sendMessage(usage);
                 return false;
             }
@@ -43,7 +44,7 @@ public class Arguments {
             if (this.args.size() > 0) {
                 if (!this.args.get(this.args.size() - 1).isNullable()) {
                     if (this.args.size() != arguments.length) {
-                        sender.sendMessage(Prefix.ERROR + String.format("Required length: %s. Received: %s", args.size(), arguments.length));
+                        sender.sendMessage(Prefix.ERROR + String.format("Required arguments: %s. Received: %s", args.size(), arguments.length));
                         sender.spigot().sendMessage(usage);
                         return false;
                     }

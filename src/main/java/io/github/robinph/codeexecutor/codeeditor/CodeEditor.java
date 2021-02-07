@@ -388,6 +388,12 @@ public class CodeEditor implements Cloneable {
 
             for (int i = 0; i < lines.size(); i++) {
                 String line = lines.get(i);
+
+                if (lineNumber + i > CodeEditor.maxLineCount) {
+                    this.addFooterMessage(Prefix.WARNING_COLOR + "Maximum line count is: " + CodeEditor.maxLineCount + " characters. Ignored " + (CodeEditor.maxLineCount - (lineNumber + i)) + " lines.");
+                    break;
+                }
+
                 if (line.length() > CodeEditor.maxCharacterPerLine) {
                     this.addFooterMessage(Prefix.WARNING_COLOR + "Maximum line length is: " + CodeEditor.maxCharacterPerLine + " characters. Input has been trimmed down.");
                 }
@@ -406,7 +412,7 @@ public class CodeEditor implements Cloneable {
         this.currentLine += distance;
 
         if (this.currentLine < 1 || this.currentLine > CodeEditor.maxLineCount) {
-            this.addFooterMessage(Prefix.ERROR_COLOR + "Could not scroll to line " + this.currentLine + ". Allowed lines are between 1 to " + CodeEditor.maxLineCount);
+            this.addFooterMessage(Prefix.ERROR_COLOR + "Can't scroll to line " + this.currentLine + ". Allowed lines are between 1 to " + CodeEditor.maxLineCount);
         }
 
         this.currentLine = Math.max(1, this.currentLine);
@@ -608,7 +614,7 @@ public class CodeEditor implements Cloneable {
 
     public boolean canRun(boolean sendMessage) {
         if (this.getLanguage() == null) {
-            if (sendMessage) this.addFooterMessage(Prefix.ERROR_COLOR + "Could not run. Language is not set.");
+            if (sendMessage) this.addFooterMessage(Prefix.ERROR_COLOR + "Can't run. Language is not set.");
             return false;
         }
 

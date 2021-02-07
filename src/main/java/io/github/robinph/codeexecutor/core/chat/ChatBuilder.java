@@ -10,7 +10,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class ChatBuilder {
-    private @Getter final TextComponent text;
+    private @Getter
+    final TextComponent text;
 
     public ChatBuilder() {
         this.text = new TextComponent();
@@ -61,7 +62,6 @@ public class ChatBuilder {
 
         return this;
     }
-
 
     public ChatBuilder runCommand(String cmd) {
         this.text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + cmd));
