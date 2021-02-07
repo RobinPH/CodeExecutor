@@ -1,5 +1,5 @@
 # CodeExecutor
-CodeExecutor enables player to write and execute their code inside your server. CodeExecutor uses [Piston](https://github.com/engineer-man/piston) code execution engine for the execution of every code.
+CodeExecutor enables player to write and execute their code inside your server. CodeExecutor uses [Piston API](https://github.com/engineer-man/piston) for the execution of every code.
 
 Plugin: https://www.spigotmc.org/resources/codeexecutor.88710/
 
